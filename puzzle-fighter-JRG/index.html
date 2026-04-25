@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Fighter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <h1 class="title">⚔️ PUZZLE FIGHTER ⚔️</h1>
+    <div class="game-area">
+      <div class="side-panel left-panel">
+        <div class="player-label">PLAYER 1</div>
+        <div class="score-label">SCORE</div>
+        <div id="score-p1" class="score-value">0</div>
+        <div class="next-label">NEXT</div>
+        <canvas id="next-p1" width="80" height="80"></canvas>
+        <div class="wins-label">WINS</div>
+        <div id="wins-p1" class="wins-value">0</div>
+        <div class="drop-count-label">DROPS</div>
+        <div id="drops-p1" class="drop-count-value">0</div>
+      </div>
+      <canvas id="board-p1" width="216" height="432"></canvas>
+      <div class="vs-divider">VS</div>
+      <canvas id="board-p2" width="216" height="432"></canvas>
+      <div class="side-panel right-panel">
+        <div class="player-label">CPU</div>
+        <div class="score-label">SCORE</div>
+        <div id="score-p2" class="score-value">0</div>
+        <div class="next-label">NEXT</div>
+        <canvas id="next-p2" width="80" height="80"></canvas>
+        <div class="wins-label">WINS</div>
+        <div id="wins-p2" class="wins-value">0</div>
+        <div class="drop-count-label">DROPS</div>
+        <div id="drops-p2" class="drop-count-value">0</div>
+      </div>
+    </div>
+    <div class="controls-info">
+      <span>← → Move</span>
+      <span>↓ Soft Drop</span>
+      <span>↑ Hard Drop</span>
+      <span>Z Rotate Left</span>
+      <span>X Rotate Right</span>
+      <span>P Pause</span>
+    </div>
+    <div id="overlay" class="overlay">
+      <div class="overlay-content">
+        <h2 id="overlay-title">PUZZLE FIGHTER</h2>
+        <p id="overlay-message">Match gems, create Power Gems, and crush your opponent!</p>
+        <button id="start-btn" class="start-btn">START GAME</button>
+      </div>
+    </div>
+    <div id="counter-warning-p1" class="counter-warning left"></div>
+    <div id="counter-warning-p2" class="counter-warning right"></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
