@@ -17,6 +17,7 @@ import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
 import { EnemySpawner } from '../entities/EnemySpawner.js';
 import { HUD } from '../ui/HUD.js';
+import { Instructions } from '../ui/Instructions.js';
 import { play } from '../audio.js';
 
 export class GameScene extends Phaser.Scene {
@@ -125,6 +126,9 @@ export class GameScene extends Phaser.Scene {
       loop: true,
       callback: () => this.tickTimer(),
     });
+
+    // Auto-fading on-screen control reference; self-destroys after INSTRUCTIONS_DURATION_MS.
+    this.instructions = new Instructions(this);
 
     // Pause input — read via JustDown in update() to avoid the keydown-listener double-fire
     // that can happen when PauseScene resumes GameScene on the same key event.

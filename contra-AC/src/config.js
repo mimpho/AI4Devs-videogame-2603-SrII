@@ -102,6 +102,13 @@ export const TILE_SIZE = 16;
 export const GROUND_TILE_TOP = 25; // grass-top: green strip on dirt, col 1 row 1
 export const GROUND_TILE_DIRT = 29; // solid dirt fill, col 5 row 1
 
+export const INSTRUCTIONS_DURATION_MS = 10000;
+export const INSTRUCTIONS_FADE_OUT_MS = 500;
+export const INSTRUCTIONS_TOP_Y = 60;
+export const INSTRUCTIONS_LINE_HEIGHT = 22;
+export const INSTRUCTIONS_FONT_SIZE = 16;
+export const INSTRUCTIONS_TEXT_COLOR = '#ffffff';
+
 // Foreground decoration tiles drawn on top of the grass surface. Same atlas.
 // Each entry has { x, frame, scale? }. Default scale is DECORATION_SCALE; per-decoration `scale`
 // overrides for variety (e.g. trees rendered larger so their silhouette reads clearly).
