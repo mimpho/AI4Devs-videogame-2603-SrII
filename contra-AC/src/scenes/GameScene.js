@@ -10,6 +10,8 @@ import {
   TILE_SIZE,
   GROUND_TILE_TOP,
   GROUND_TILE_DIRT,
+  DECORATIONS,
+  DECORATION_SCALE,
 } from '../config.js';
 import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
@@ -36,6 +38,15 @@ export class GameScene extends Phaser.Scene {
     this.add
       .tileSprite(0, groundTopY + TILE_SIZE, levelWidth, GROUND_HEIGHT - TILE_SIZE, 'grass-tileset', GROUND_TILE_DIRT)
       .setOrigin(0, 0);
+
+    // Foreground props — single-tile decorations bottom-anchored on the grass. Each entry can
+    // override the default scale (e.g. trees render larger).
+    for (const dec of DECORATIONS) {
+      this.add
+        .image(dec.x, groundTopY, 'grass-tileset', dec.frame)
+        .setOrigin(0.5, 1)
+        .setScale(dec.scale ?? DECORATION_SCALE);
+    }
 
     this.groundBody = this.add
       .rectangle(0, GAME_HEIGHT - GROUND_HEIGHT, levelWidth, GROUND_HEIGHT)

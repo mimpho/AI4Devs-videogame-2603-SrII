@@ -101,3 +101,37 @@ export const TILE_SIZE = 16;
 // Row 0 is fully transparent in this PNG — the actual atlas content starts at row 1.
 export const GROUND_TILE_TOP = 25; // grass-top: green strip on dirt, col 1 row 1
 export const GROUND_TILE_DIRT = 29; // solid dirt fill, col 5 row 1
+
+// Foreground decoration tiles drawn on top of the grass surface. Same atlas.
+// Each entry has { x, frame, scale? }. Default scale is DECORATION_SCALE; per-decoration `scale`
+// overrides for variety (e.g. trees rendered larger so their silhouette reads clearly).
+//
+// Atlas frames (verified at 12× zoom in /tmp/tileset-probe/tree-bush-compare.png):
+//   125 = flower (white blossom) — complete on its own
+//   148 = sign post — complete
+//   149 = bush (round dome of leaves) — complete
+//   150 = tree (rounded canopy + tiny trunk hint at bottom) — complete on its own
+//
+// We use single-tile decorations only. Multi-tile composites were tried with frames 119/143
+// (the "tall tree" pieces from the demo-mockup section), but frame 143 is actually a generic
+// sky-grass-dirt strip — not a tree trunk — so the composite read as "tree on top of a stripe".
+// Frame 150 alone is a complete tree silhouette per the atlas designer's intent; the original
+// "cut at half" perception was scale-related, fixed by rendering trees at a larger per-entry scale.
+export const DECORATION_SCALE = 2;
+const TREE_SCALE = 3;
+export const DECORATIONS = [
+  { x: 200, frame: 150, scale: TREE_SCALE },  // tree
+  { x: 360, frame: 125 },                      // flower
+  { x: 520, frame: 149 },                      // bush
+  { x: 720, frame: 125 },                      // flower
+  { x: 880, frame: 150, scale: TREE_SCALE },  // tree
+  { x: 1100, frame: 148 },                     // sign
+  { x: 1280, frame: 149 },                     // bush
+  { x: 1450, frame: 125 },                     // flower
+  { x: 1640, frame: 150, scale: TREE_SCALE }, // tree
+  { x: 1820, frame: 149 },                     // bush
+  { x: 2000, frame: 149 },                     // bush
+  { x: 2200, frame: 125 },                     // flower
+  { x: 2400, frame: 150, scale: TREE_SCALE }, // tree
+  { x: 2620, frame: 149 },                     // bush
+];
