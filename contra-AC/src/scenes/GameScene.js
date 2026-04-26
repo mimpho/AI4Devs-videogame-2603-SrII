@@ -47,7 +47,10 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, levelWidth, GAME_HEIGHT);
 
     this.bullets = createBulletPool(this);
-    this.physics.add.collider(this.bullets, this.groundBody, (bullet) => {
+    // Phaser's collideSpriteVsGroup dispatch puts the standalone sprite first in the
+    // callback, regardless of input order — so passing groundBody first lines up with
+    // the (ground, bullet) parameter naming and `bullet.disableBody` resolves correctly.
+    this.physics.add.collider(this.groundBody, this.bullets, (ground, bullet) => {
       bullet.disableBody(true, true);
     });
 
