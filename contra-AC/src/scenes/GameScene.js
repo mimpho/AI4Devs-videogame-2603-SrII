@@ -2,6 +2,7 @@ import { GAME_WIDTH, GAME_HEIGHT, GROUND_HEIGHT, LEVEL_WIDTH_SCREENS } from '../
 import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
 import { EnemySpawner } from '../entities/EnemySpawner.js';
+import { HUD } from '../ui/HUD.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -44,9 +45,25 @@ export class GameScene extends Phaser.Scene {
       enemy.takeDamage(1);
     });
 
+    // Player damage from enemies on overlap (collision still keeps bodies separate).
+    this.physics.add.overlap(this.player, this.enemies, (player, enemy) => {
+      if (!enemy.active || enemy.dead) return;
+      player.takeDamage(1);
+    });
+
+    // Player damage from enemy bullets.
+    this.physics.add.overlap(this.player, this.bullets, (player, bullet) => {
+      if (bullet.friendly) return;
+      bullet.disableBody(true, true);
+      player.takeDamage(1);
+    });
+
     this.spawner = new EnemySpawner(this, this.enemies);
 
     this.cameras.main.startFollow(this.player, true, 0.1, 0);
+
+    this.hud = new HUD(this);
+    this.events.emit('player-hp-changed', this.player.hp);
   }
 
   update() {

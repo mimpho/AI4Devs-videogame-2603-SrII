@@ -2,8 +2,15 @@ import {
   PLAYER_RUN_SPEED,
   PLAYER_JUMP_VELOCITY,
   PLAYER_FIRE_COOLDOWN_MS,
+  PLAYER_MAX_HP,
+  PLAYER_HIT_IFRAMES_MS,
+  PLAYER_HIT_BLINK_INTERVAL_MS,
 } from '../config.js';
-import { playShootPlaceholder } from '../audio.js';
+import {
+  playShootPlaceholder,
+  playPlayerHurtPlaceholder,
+  playPlayerDeathPlaceholder,
+} from '../audio.js';
 
 const FIRE_OFFSET_X = 30;
 const FIRE_OFFSET_Y = -10;
@@ -15,7 +22,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.setCollideWorldBounds(true);
-    // Character occupies roughly the middle 30x30 of each 100x100 frame.
     this.body.setSize(30, 30).setOffset(35, 35);
 
     this.keys = scene.input.keyboard.addKeys({
@@ -30,15 +36,33 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.lastFiredAt = 0;
     this.attacking = false;
+    this.hurting = false;
+    this.dead = false;
+    this.hp = PLAYER_MAX_HP;
+    this.invulnerableUntil = 0;
+    this.blinkTween = null;
 
     this.on('animationcomplete-soldier-attack', () => {
       this.attacking = false;
+    });
+
+    this.on('animationcomplete-soldier-hurt', () => {
+      this.hurting = false;
+    });
+
+    this.on('animationcomplete-soldier-death', () => {
+      this.scene.scene.start('GameOverScene', { reason: 'killed' });
     });
 
     this.play('soldier-idle');
   }
 
   update() {
+    if (this.dead) {
+      this.setVelocityX(0);
+      return;
+    }
+
     const leftDown = this.keys.left.isDown || this.keys.a.isDown;
     const rightDown = this.keys.right.isDown || this.keys.d.isDown;
 
@@ -58,7 +82,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.tryFire();
 
-    if (!this.attacking) {
+    if (!this.attacking && !this.hurting) {
       const want = this.body.velocity.x !== 0 ? 'soldier-walk' : 'soldier-idle';
       if (this.anims.currentAnim?.key !== want) this.play(want);
     }
@@ -83,5 +107,56 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attacking = true;
     this.play('soldier-attack', true);
     playShootPlaceholder();
+  }
+
+  takeDamage(amount = 1) {
+    if (this.dead) return;
+    const time = this.scene.time.now;
+    if (time < this.invulnerableUntil) return;
+
+    this.hp = Math.max(0, this.hp - amount);
+    this.scene.events.emit('player-hp-changed', this.hp);
+
+    if (this.hp > 0) {
+      this.invulnerableUntil = time + PLAYER_HIT_IFRAMES_MS;
+      this.attacking = false;
+      this.hurting = true;
+      this.play('soldier-hurt');
+      playPlayerHurtPlaceholder();
+      this.startBlink();
+      return;
+    }
+
+    this.dead = true;
+    this.invulnerableUntil = Number.POSITIVE_INFINITY;
+    this.setVelocity(0, 0);
+    this.attacking = false;
+    this.hurting = false;
+    this.stopBlink();
+    this.setAlpha(1);
+    this.play('soldier-death');
+    playPlayerDeathPlaceholder();
+  }
+
+  startBlink() {
+    this.stopBlink();
+    this.blinkTween = this.scene.tweens.add({
+      targets: this,
+      alpha: 0.4,
+      yoyo: true,
+      repeat: -1,
+      duration: PLAYER_HIT_BLINK_INTERVAL_MS,
+    });
+    this.scene.time.delayedCall(PLAYER_HIT_IFRAMES_MS, () => {
+      this.stopBlink();
+      this.setAlpha(1);
+    });
+  }
+
+  stopBlink() {
+    if (this.blinkTween) {
+      this.blinkTween.stop();
+      this.blinkTween = null;
+    }
   }
 }

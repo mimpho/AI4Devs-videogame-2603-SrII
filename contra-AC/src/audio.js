@@ -11,18 +11,30 @@ function getCtx() {
   return ctx;
 }
 
-export function playShootPlaceholder() {
+function blip({ type = 'square', startFreq, endFreq, duration, volume = 0.05 }) {
   const c = getCtx();
   if (!c) return;
   const now = c.currentTime;
   const osc = c.createOscillator();
   const gain = c.createGain();
-  osc.type = 'square';
-  osc.frequency.setValueAtTime(880, now);
-  osc.frequency.exponentialRampToValueAtTime(220, now + 0.05);
-  gain.gain.setValueAtTime(0.05, now);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+  osc.type = type;
+  osc.frequency.setValueAtTime(startFreq, now);
+  osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+  gain.gain.setValueAtTime(volume, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.01);
   osc.connect(gain).connect(c.destination);
   osc.start(now);
-  osc.stop(now + 0.06);
+  osc.stop(now + duration + 0.01);
+}
+
+export function playShootPlaceholder() {
+  blip({ startFreq: 880, endFreq: 220, duration: 0.05 });
+}
+
+export function playPlayerHurtPlaceholder() {
+  blip({ type: 'sawtooth', startFreq: 440, endFreq: 110, duration: 0.18, volume: 0.08 });
+}
+
+export function playPlayerDeathPlaceholder() {
+  blip({ type: 'sawtooth', startFreq: 220, endFreq: 60, duration: 0.6, volume: 0.1 });
 }

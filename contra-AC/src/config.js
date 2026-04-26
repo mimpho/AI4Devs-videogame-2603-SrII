@@ -2,7 +2,7 @@ export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540;
 
 export const LEVEL_DURATION_SECONDS = 90; // Reserved for Phase 6 countdown timer.
-export const PLAYER_MAX_HP = 3; // Reserved for Phase 5 damage system.
+export const PLAYER_MAX_HP = 3;
 
 export const PLAYER_RUN_SPEED = 220;
 export const PLAYER_JUMP_VELOCITY = 520;
@@ -61,3 +61,17 @@ export const ENEMY_VARIANTS = {
     hitbox: DEFAULT_HITBOX,
   },
 };
+
+export const PLAYER_HIT_IFRAMES_MS = 1000;
+export const PLAYER_HIT_BLINK_INTERVAL_MS = 100;
+export const ANIM_FRAMERATE_HURT = 12;
+export const ANIM_FRAMERATE_DEATH = 8;
+
+export const HUD_MARGIN = 16;
+export const HUD_PIP_SIZE = 18;
+export const HUD_PIP_SPACING = 8;
+export const HUD_PIP_FILL_COLOR = 0xff4444;
+export const HUD_PIP_STROKE_COLOR = 0xffffff;
+export const HUD_SCORE_X = 200;
+export const HUD_SCORE_FONT_SIZE = 18;
+export const HUD_FONT_FAMILY = 'monospace';
