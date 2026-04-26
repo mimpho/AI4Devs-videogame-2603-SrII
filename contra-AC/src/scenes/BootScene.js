@@ -13,6 +13,7 @@ import {
 
 const SOLDIER = 'resources/Characters(100x100)/Soldier/Soldier';
 const ORC = 'resources/Characters(100x100)/Orc/Orc';
+const AUDIO = 'resources/audio';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -20,22 +21,28 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Soldier sheets — all 100x100 frames.
-    this.load.spritesheet('soldier-idle', `${SOLDIER}/Soldier-Idle.png`, { frameWidth: 100, frameHeight: 100 }); // 6 frames
-    this.load.spritesheet('soldier-walk', `${SOLDIER}/Soldier-Walk.png`, { frameWidth: 100, frameHeight: 100 }); // 8 frames
-    this.load.spritesheet('soldier-attack', `${SOLDIER}/Soldier-Attack01.png`, { frameWidth: 100, frameHeight: 100 }); // 6 frames
-    this.load.spritesheet('soldier-hurt', `${SOLDIER}/Soldier-Hurt.png`, { frameWidth: 100, frameHeight: 100 }); // 4 frames
-    this.load.spritesheet('soldier-death', `${SOLDIER}/Soldier-Death.png`, { frameWidth: 100, frameHeight: 100 }); // 4 frames
+    this.load.spritesheet('soldier-idle', `${SOLDIER}/Soldier-Idle.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('soldier-walk', `${SOLDIER}/Soldier-Walk.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('soldier-attack', `${SOLDIER}/Soldier-Attack01.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('soldier-hurt', `${SOLDIER}/Soldier-Hurt.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('soldier-death', `${SOLDIER}/Soldier-Death.png`, { frameWidth: 100, frameHeight: 100 });
 
-    // Orc sheets — same frame layouts as Soldier.
-    this.load.spritesheet('orc-idle', `${ORC}/Orc-Idle.png`, { frameWidth: 100, frameHeight: 100 }); // 6 frames
-    this.load.spritesheet('orc-walk', `${ORC}/Orc-Walk.png`, { frameWidth: 100, frameHeight: 100 }); // 8 frames
-    this.load.spritesheet('orc-attack', `${ORC}/Orc-Attack01.png`, { frameWidth: 100, frameHeight: 100 }); // 6 frames
-    this.load.spritesheet('orc-hurt', `${ORC}/Orc-Hurt.png`, { frameWidth: 100, frameHeight: 100 }); // 4 frames
-    this.load.spritesheet('orc-death', `${ORC}/Orc-Death.png`, { frameWidth: 100, frameHeight: 100 }); // 4 frames
+    this.load.spritesheet('orc-idle', `${ORC}/Orc-Idle.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('orc-walk', `${ORC}/Orc-Walk.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('orc-attack', `${ORC}/Orc-Attack01.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('orc-hurt', `${ORC}/Orc-Hurt.png`, { frameWidth: 100, frameHeight: 100 });
+    this.load.spritesheet('orc-death', `${ORC}/Orc-Death.png`, { frameWidth: 100, frameHeight: 100 });
 
     this.load.image('grass-tileset', 'resources/grass tileset.png');
     this.load.image('arrow', 'resources/Arrow(Projectile)/Arrow01(32x32).png');
+
+    // Audio
+    this.load.audio('shoot', `${AUDIO}/shoot.wav`);
+    this.load.audio('enemy_hit', `${AUDIO}/enemy_hit.wav`);
+    this.load.audio('enemy_death', `${AUDIO}/enemy_death.wav`);
+    this.load.audio('player_hit', `${AUDIO}/player_hit.wav`);
+    this.load.audio('player_death', `${AUDIO}/player_death.wav`);
+    this.load.audio('victory', `${AUDIO}/victory.wav`);
   }
 
   create() {

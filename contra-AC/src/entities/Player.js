@@ -5,12 +5,10 @@ import {
   PLAYER_MAX_HP,
   PLAYER_HIT_IFRAMES_MS,
   PLAYER_HIT_BLINK_INTERVAL_MS,
+  SCREEN_SHAKE_DURATION_MS,
+  SCREEN_SHAKE_INTENSITY,
 } from '../config.js';
-import {
-  playShootPlaceholder,
-  playPlayerHurtPlaceholder,
-  playPlayerDeathPlaceholder,
-} from '../audio.js';
+import { play } from '../audio.js';
 
 const FIRE_OFFSET_X = 30;
 const FIRE_OFFSET_Y = -10;
@@ -106,7 +104,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.lastFiredAt = time;
     this.attacking = true;
     this.play('soldier-attack', true);
-    playShootPlaceholder();
+    play(this.scene, 'shoot');
   }
 
   takeDamage(amount = 1) {
@@ -122,7 +120,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.attacking = false;
       this.hurting = true;
       this.play('soldier-hurt');
-      playPlayerHurtPlaceholder();
+      play(this.scene, 'player_hit');
+      this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION_MS, SCREEN_SHAKE_INTENSITY);
       this.startBlink();
       return;
     }
@@ -135,7 +134,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.stopBlink();
     this.setAlpha(1);
     this.play('soldier-death');
-    playPlayerDeathPlaceholder();
+    play(this.scene, 'player_death');
+    this.scene.cameras.main.shake(SCREEN_SHAKE_DURATION_MS, SCREEN_SHAKE_INTENSITY);
   }
 
   startBlink() {

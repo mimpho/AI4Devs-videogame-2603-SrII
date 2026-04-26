@@ -5,6 +5,7 @@ import { GameScene } from './scenes/GameScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 import { PauseScene } from './scenes/PauseScene.js';
+import { toggleMute } from './audio.js';
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -23,4 +24,11 @@ new Phaser.Game({
     },
   },
   scene: [BootScene, TitleScene, GameScene, GameOverScene, VictoryScene, PauseScene],
+});
+
+// Global mute toggle on M (works on every scene; in-session only).
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'm' || e.key === 'M') {
+    toggleMute();
+  }
 });

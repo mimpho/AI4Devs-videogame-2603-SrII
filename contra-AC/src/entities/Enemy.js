@@ -1,4 +1,5 @@
 import { ENEMY_VARIANTS } from '../config.js';
+import { play } from '../audio.js';
 
 const ENEMY_FIRE_OFFSET_X = 30;
 const ENEMY_FIRE_OFFSET_Y = -8;
@@ -106,11 +107,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.hp -= amount;
     if (this.hp > 0) {
       this.play('orc-hurt');
+      play(this.scene, 'enemy_hit');
       return;
     }
     this.dead = true;
     this.body.enable = false;
     this.setVelocity(0, 0);
     this.play('orc-death');
+    play(this.scene, 'enemy_death');
   }
 }

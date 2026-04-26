@@ -89,3 +89,7 @@ export const PAUSE_OVERLAY_COLOR = 0x000000;
 export const PAUSE_TEXT_COLOR = '#ffffff';
 export const PAUSE_HEADLINE_FONT_SIZE = 48;
 export const PAUSE_PROMPT_FONT_SIZE = 18;
+
+export const AUDIO_VOLUME = 0.6;
+export const SCREEN_SHAKE_DURATION_MS = 150;
+export const SCREEN_SHAKE_INTENSITY = 0.005;

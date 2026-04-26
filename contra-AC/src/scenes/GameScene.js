@@ -12,7 +12,7 @@ import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
 import { EnemySpawner } from '../entities/EnemySpawner.js';
 import { HUD } from '../ui/HUD.js';
-import { playVictoryPlaceholder } from '../audio.js';
+import { play } from '../audio.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -132,7 +132,7 @@ export class GameScene extends Phaser.Scene {
     if (this.player.dead) return;
     this.victoryFired = true;
     this.timerEvent.remove(false);
-    playVictoryPlaceholder();
+    play(this, 'victory');
     this.scene.start('VictoryScene', { score: this.score });
   }
 
