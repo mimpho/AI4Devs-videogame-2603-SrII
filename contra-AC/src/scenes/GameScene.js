@@ -1,4 +1,5 @@
-import { GAME_WIDTH, GAME_HEIGHT } from '../config.js';
+import { GAME_WIDTH, GAME_HEIGHT, GROUND_HEIGHT, LEVEL_WIDTH_SCREENS } from '../config.js';
+import { Player } from '../entities/Player.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -6,14 +7,32 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor('#1a3a1a');
+    const levelWidth = GAME_WIDTH * LEVEL_WIDTH_SCREENS;
 
+    this.cameras.main.setBackgroundColor('#7ec0ee');
+
+    // Ground visual: tile the full grass tileset image horizontally; the visible top GROUND_HEIGHT pixels show.
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'Game Scene (placeholder)', {
-        fontFamily: 'monospace',
-        fontSize: '24px',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
+      .tileSprite(0, GAME_HEIGHT - GROUND_HEIGHT, levelWidth, GROUND_HEIGHT, 'grass-tileset')
+      .setOrigin(0, 0);
+
+    // Invisible static body for collision, sized to match the visual ground strip.
+    const groundBody = this.add
+      .rectangle(0, GAME_HEIGHT - GROUND_HEIGHT, levelWidth, GROUND_HEIGHT)
+      .setOrigin(0, 0)
+      .setVisible(false);
+    this.physics.add.existing(groundBody, true);
+
+    this.physics.world.setBounds(0, 0, levelWidth, GAME_HEIGHT);
+    this.cameras.main.setBounds(0, 0, levelWidth, GAME_HEIGHT);
+
+    this.player = new Player(this, 80, GAME_HEIGHT - GROUND_HEIGHT - 100);
+    this.physics.add.collider(this.player, groundBody);
+
+    this.cameras.main.startFollow(this.player, true, 0.1, 0);
+  }
+
+  update() {
+    this.player.update();
   }
 }
