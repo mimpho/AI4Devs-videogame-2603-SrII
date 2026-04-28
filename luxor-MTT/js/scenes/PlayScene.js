@@ -34,7 +34,7 @@ class PlayScene extends Phaser.Scene {
         this.buildCurve();
 
         // Modo Edición: Desactivado para juego final (Descomentar para editar paths)
-
+        /*
         this.debugHandles = [];
         this.originalPoints.forEach((p, index) => {
             let handle = this.add.image(p.x, p.y, 'dragHandle').setInteractive({ cursor: 'pointer' });
@@ -56,7 +56,7 @@ class PlayScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-DOWN', () => { this.originalPoints.forEach(p => p.y += 1); this.updateHandlesAndCurve(); });
         this.input.keyboard.on('keydown-LEFT', () => { this.originalPoints.forEach(p => p.x -= 1); this.updateHandlesAndCurve(); });
         this.input.keyboard.on('keydown-RIGHT', () => { this.originalPoints.forEach(p => p.x += 1); this.updateHandlesAndCurve(); });
-
+        
         // Transformación Global: Escalado (centrado)
         const cx = 640; const cy = 360;
         this.input.keyboard.on('keydown-W', () => { this.originalPoints.forEach(p => p.y = cy + (p.y - cy) * 1.005); this.updateHandlesAndCurve(); });
@@ -79,7 +79,7 @@ class PlayScene extends Phaser.Scene {
             console.log(`=== COPIA ESTO DENTRO DE assets/paths/level${this.currentLevel}.json ===`);
             console.log(JSON.stringify(cleanPoints));
         });
-
+        */
         // Definimos los colores antes para poder cargar la munición inicial
         this.sphereColors = ['sphere_red', 'sphere_blue', 'sphere_green', 'sphere_yellow'];
 
