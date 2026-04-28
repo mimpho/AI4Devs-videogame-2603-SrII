@@ -2,6 +2,8 @@
 
 ![Luxor Web Logo](assets/images/luxor_logo.png)
 
+> 🎮 **[▶ Jugar en vivo](https://mimpho.github.io/AI4Devs-videogame-2603-SrII/luxor-MTT/)** — GitHub Pages
+
 Una adaptación moderna y pulida del clásico juego de match-3 de esferas ambientado en el Antiguo Egipto. Este proyecto se centra en ofrecer una experiencia de juego fluida con una estética visual de alta fidelidad.
 
 ## 🌟 Características
