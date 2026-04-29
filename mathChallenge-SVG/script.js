@@ -65,6 +65,18 @@ function normalizePlayerName(name) {
   return name.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
+function validatePlayerName(rawName, invalidMessage) {
+  const cleanedName = normalizePlayerName(rawName);
+
+  if (cleanedName.length === 1 || cleanedName.length > 3) {
+    setFeedback(invalidMessage, "incorrect");
+    playerNameInput.focus();
+    return null;
+  }
+
+  return cleanedName;
+}
+
 function saveHighScore() {
   if (state.playerScore > state.highScore) {
     state.highScore = state.playerScore;
@@ -313,11 +325,12 @@ function tickTimer() {
 }
 
 function startGame() {
-  const cleanedName = normalizePlayerName(playerNameInput.value);
+  const cleanedName = validatePlayerName(
+    playerNameInput.value,
+    "Enter a 2 or 3 character name to start."
+  );
 
-  if (cleanedName.length === 1 || cleanedName.length > 3) {
-    setFeedback("Enter a 2 or 3 character name to start.", "incorrect");
-    playerNameInput.focus();
+  if (cleanedName === null) {
     return;
   }
 
@@ -352,11 +365,12 @@ function startGame() {
 function handlePlayerSubmit(event) {
   event.preventDefault();
 
-  const cleanedName = normalizePlayerName(playerNameInput.value);
+  const cleanedName = validatePlayerName(
+    playerNameInput.value,
+    "Use 2 or 3 characters, or leave it empty for YOU."
+  );
 
-  if (cleanedName.length === 1 || cleanedName.length > 3) {
-    setFeedback("Use 2 or 3 characters, or leave it empty for YOU.", "incorrect");
-    playerNameInput.focus();
+  if (cleanedName === null) {
     return;
   }
 
