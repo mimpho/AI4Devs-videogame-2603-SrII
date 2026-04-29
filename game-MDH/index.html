@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON DRIFT</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Pantalla de inicio -->
+  <div id="startScreen" class="overlay">
+    <div class="overlay-content">
+      <div class="logo-wrap">
+        <div class="logo-sub">✦ ARCADE ✦</div>
+        <h1 class="logo">NEON<br>DRIFT</h1>
+        <div class="logo-line"></div>
+      </div>
+      <p class="tagline">Esquiva. Sobrevive. Domina.</p>
+      <div class="controls-hint">
+        <span>← → Mover</span>
+        <span>ESPACIO Disparar</span>
+      </div>
+      <button id="startBtn" class="btn-primary">INICIAR PARTIDA</button>
+      <div class="hi-score-display">HI-SCORE: <span id="hiScoreStart">0</span></div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="grid-floor"></div>
+  </div>
+
+  <!-- HUD en juego -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-left">
+      <div class="hud-label">SCORE</div>
+      <div class="hud-value" id="scoreDisplay">0</div>
+    </div>
+    <div class="hud-center">
+      <div class="hud-label">NIVEL</div>
+      <div class="hud-value" id="levelDisplay">1</div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-label">VIDAS</div>
+      <div class="hud-value hearts" id="livesDisplay">♥♥♥</div>
+    </div>
+  </div>
+
+  <!-- Pantalla Game Over -->
+  <div id="gameOverScreen" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="go-title">GAME<br>OVER</div>
+      <div class="go-scores">
+        <div class="score-row">
+          <span>PUNTUACIÓN</span>
+          <span id="finalScore">0</span>
+        </div>
+        <div class="score-row hi">
+          <span>HI-SCORE</span>
+          <span id="finalHiScore">0</span>
+        </div>
+        <div class="score-row">
+          <span>NIVEL</span>
+          <span id="finalLevel">1</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button id="restartBtn" class="btn-primary">REINTENTAR</button>
+        <button id="menuBtn" class="btn-secondary">MENÚ</button>
+      </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="grid-floor"></div>
+  </div>
+
+  <!-- Pausa -->
+  <div id="pauseScreen" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="pause-title">PAUSA</div>
+      <button id="resumeBtn" class="btn-primary">CONTINUAR</button>
+      <button id="pauseMenuBtn" class="btn-secondary">MENÚ</button>
+    </div>
+    <div class="scanlines"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
