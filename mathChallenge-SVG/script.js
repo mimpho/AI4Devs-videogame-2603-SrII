@@ -1,13 +1,29 @@
-const ROUND_SECONDS = 45;
-const MACHINE_SCORE_CHANCE = 0.38;
 const HIGH_SCORE_KEY = "mathChallengeHighScore";
 const LEADERBOARD_KEY = "mathChallengeLeaderboard";
+const {
+  ROUND_SECONDS,
+  TIMER_TICK_MS,
+  LEVEL_BASE,
+  LEVEL_SCORE_DIVISOR,
+  DEFAULT_PLAYER_NAME,
+  PLAYER_NAME_MIN_LENGTH,
+  PLAYER_NAME_MAX_LENGTH,
+  HIGH_SCORE_FALLBACK,
+  LEADERBOARD_LIMIT,
+  FEEDBACK_FLASH_MS,
+  CORRECT_SCORE_INCREMENT,
+  MACHINE_BASE_SCORE_CHANCE,
+  MACHINE_SCORE_CHANCE_MAX,
+  MACHINE_SCORE_CHANCE_PER_LEVEL,
+  DIFFICULTY,
+  STREAK
+} = window.GAME_CONFIG;
 
 const state = {
   timeLeft: ROUND_SECONDS,
   playerName: "",
   playerScore: 0,
-  level: 1,
+  level: LEVEL_BASE,
   machineScore: 0,
   streak: 0,
   highScore: loadHighScore(),
@@ -43,9 +59,9 @@ function randomInt(min, max) {
 
 function loadHighScore() {
   try {
-    return Number(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+    return Number(localStorage.getItem(HIGH_SCORE_KEY)) || HIGH_SCORE_FALLBACK;
   } catch {
-    return 0;
+    return HIGH_SCORE_FALLBACK;
   }
 }
 
@@ -55,7 +71,7 @@ function loadLeaderboard() {
     return savedScores
       .filter((entry) => entry.name && Number.isFinite(entry.score))
       .sort((first, second) => second.score - first.score)
-      .slice(0, 3);
+      .slice(0, LEADERBOARD_LIMIT);
   } catch {
     return [];
   }
@@ -68,7 +84,10 @@ function normalizePlayerName(name) {
 function validatePlayerName(rawName, invalidMessage) {
   const cleanedName = normalizePlayerName(rawName);
 
-  if (cleanedName.length === 1 || cleanedName.length > 3) {
+  if (
+    (cleanedName.length > 0 && cleanedName.length < PLAYER_NAME_MIN_LENGTH) ||
+    cleanedName.length > PLAYER_NAME_MAX_LENGTH
+  ) {
     setFeedback(invalidMessage, "incorrect");
     playerNameInput.focus();
     return null;
@@ -101,7 +120,7 @@ function saveLeaderboardEntry() {
       storedLeaderboard = savedScores
         .filter((entry) => entry.name && Number.isFinite(entry.score))
         .sort((first, second) => second.score - first.score)
-        .slice(0, 3);
+        .slice(0, LEADERBOARD_LIMIT);
     }
   } catch {
     storedLeaderboard = state.leaderboard;
@@ -110,14 +129,14 @@ function saveLeaderboardEntry() {
   const nextLeaderboard = [
     ...storedLeaderboard,
     {
-      name: state.playerName || "YOU",
+      name: state.playerName || DEFAULT_PLAYER_NAME,
       score: state.playerScore
     }
   ];
 
   state.leaderboard = nextLeaderboard
     .sort((first, second) => second.score - first.score)
-    .slice(0, 3);
+    .slice(0, LEADERBOARD_LIMIT);
 
   try {
     localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(state.leaderboard));
@@ -148,29 +167,32 @@ function renderLeaderboard() {
 }
 
 function getLevel(score) {
-  return Math.floor(score / 5) + 1;
+  return Math.floor(score / LEVEL_SCORE_DIVISOR) + LEVEL_BASE;
 }
 
 function getDifficulty() {
-  const addMax = 25 + state.level * 8;
-  const subtractMax = 35 + state.level * 10;
-  const multiplyMax = Math.min(15, 6 + state.level);
+  const addMax = DIFFICULTY.ADD_BASE_MAX + state.level * DIFFICULTY.ADD_PER_LEVEL;
+  const subtractMax = DIFFICULTY.SUBTRACT_BASE_MAX + state.level * DIFFICULTY.SUBTRACT_PER_LEVEL;
+  const multiplyMax = Math.min(
+    DIFFICULTY.MULTIPLY_MAX_CAP,
+    DIFFICULTY.MULTIPLY_BASE_MAX + state.level * DIFFICULTY.MULTIPLY_PER_LEVEL
+  );
 
-  if (state.level >= 5) {
+  if (state.level >= DIFFICULTY.MULTIPLY_HEAVY_LEVEL) {
     return {
       addMax,
       subtractMax,
       multiplyMax,
-      operators: ["+", "-", "*", "*", "*"]
+      operators: DIFFICULTY.LATE_OPERATORS
     };
   }
 
-  if (state.level >= 3) {
+  if (state.level >= DIFFICULTY.MULTIPLY_UNLOCK_LEVEL) {
     return {
       addMax,
       subtractMax,
       multiplyMax,
-      operators: ["+", "-", "*"]
+      operators: DIFFICULTY.MID_OPERATORS
     };
   }
 
@@ -178,7 +200,7 @@ function getDifficulty() {
     addMax,
     subtractMax,
     multiplyMax,
-    operators: ["+", "-"]
+    operators: DIFFICULTY.EARLY_OPERATORS
   };
 }
 
@@ -191,20 +213,20 @@ function generateQuestion() {
   let answer;
 
   if (operator === "+") {
-    left = randomInt(1, difficulty.addMax);
-    right = randomInt(1, difficulty.addMax);
+    left = randomInt(DIFFICULTY.ADD_MIN_OPERAND, difficulty.addMax);
+    right = randomInt(DIFFICULTY.ADD_MIN_OPERAND, difficulty.addMax);
     answer = left + right;
   }
 
   if (operator === "-") {
-    left = randomInt(5, difficulty.subtractMax);
-    right = randomInt(1, left);
+    left = randomInt(DIFFICULTY.SUBTRACT_MIN_LEFT, difficulty.subtractMax);
+    right = randomInt(DIFFICULTY.SUBTRACT_MIN_RIGHT, left);
     answer = left - right;
   }
 
   if (operator === "*") {
-    left = randomInt(2, difficulty.multiplyMax);
-    right = randomInt(2, difficulty.multiplyMax);
+    left = randomInt(DIFFICULTY.MULTIPLY_MIN_OPERAND, difficulty.multiplyMax);
+    right = randomInt(DIFFICULTY.MULTIPLY_MIN_OPERAND, difficulty.multiplyMax);
     answer = left * right;
   }
 
@@ -236,7 +258,7 @@ function flashChallenge(type) {
 
   state.feedbackTimerId = setTimeout(() => {
     challengeArea.classList.remove("flash-correct", "flash-incorrect", "flash-level-up");
-  }, 260);
+  }, FEEDBACK_FLASH_MS);
 }
 
 function showLevelUp() {
@@ -247,12 +269,12 @@ function showLevelUp() {
 }
 
 function getStreakBonus() {
-  if (state.streak > 0 && state.streak % 5 === 0) {
-    return 5;
+  if (state.streak > 0 && state.streak % STREAK.HIGH_THRESHOLD === 0) {
+    return STREAK.HIGH_BONUS;
   }
 
-  if (state.streak > 0 && state.streak % 3 === 0) {
-    return 2;
+  if (state.streak > 0 && state.streak % STREAK.MEDIUM_THRESHOLD === 0) {
+    return STREAK.MEDIUM_BONUS;
   }
 
   return 0;
@@ -270,7 +292,10 @@ function scoreMachinePoint() {
     return;
   }
 
-  const machineChance = Math.min(0.72, MACHINE_SCORE_CHANCE + (state.level - 1) * 0.025);
+  const machineChance = Math.min(
+    MACHINE_SCORE_CHANCE_MAX,
+    MACHINE_BASE_SCORE_CHANCE + (state.level - LEVEL_BASE) * MACHINE_SCORE_CHANCE_PER_LEVEL
+  );
 
   if (Math.random() < machineChance) {
     state.machineScore += 1;
@@ -334,7 +359,7 @@ function startGame() {
     return;
   }
 
-  state.playerName = cleanedName || "YOU";
+  state.playerName = cleanedName || DEFAULT_PLAYER_NAME;
   playerNameInput.value = state.playerName;
 
   clearInterval(state.timerId);
@@ -342,7 +367,7 @@ function startGame() {
 
   state.timeLeft = ROUND_SECONDS;
   state.playerScore = 0;
-  state.level = 1;
+  state.level = LEVEL_BASE;
   state.machineScore = 0;
   state.streak = 0;
   state.highScore = loadHighScore();
@@ -357,8 +382,8 @@ function startGame() {
   setFeedback("Enter an answer before the machine pulls ahead.", "");
   updateDisplay();
 
-  state.timerId = setInterval(tickTimer, 1000);
-  state.machineId = setInterval(scoreMachinePoint, 1000);
+  state.timerId = setInterval(tickTimer, TIMER_TICK_MS);
+  state.machineId = setInterval(scoreMachinePoint, TIMER_TICK_MS);
   answerInput.focus();
 }
 
@@ -374,7 +399,7 @@ function handlePlayerSubmit(event) {
     return;
   }
 
-  state.playerName = cleanedName || "YOU";
+  state.playerName = cleanedName || DEFAULT_PLAYER_NAME;
   playerNameInput.value = state.playerName;
   startGame();
 }
@@ -398,7 +423,7 @@ function handleAnswerSubmit(event) {
     const previousLevel = state.level;
     state.streak += 1;
     const bonus = getStreakBonus();
-    state.playerScore += 1 + bonus;
+    state.playerScore += CORRECT_SCORE_INCREMENT + bonus;
     state.level = getLevel(state.playerScore);
     saveHighScore();
 
